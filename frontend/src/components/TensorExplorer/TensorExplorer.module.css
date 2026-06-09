@@ -1,0 +1,256 @@
+.outer {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.listPane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border-right: 1px solid #1e2535;
+}
+
+.dataPane {
+  width: 480px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dataPaneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #1e2535;
+  flex-shrink: 0;
+}
+
+.dataPaneName {
+  font-family: monospace;
+  font-size: 12px;
+  color: #a5b4fc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dataPaneClose {
+  background: none;
+  border: none;
+  color: #475569;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.1s;
+  flex-shrink: 0;
+}
+
+.dataPaneClose:hover { color: #f87171; }
+
+.dataPaneBody {
+  flex: 1;
+  overflow: hidden;
+}
+
+.rowSelected td { background: rgba(99,102,241,0.08) !important; }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #1e2535;
+  flex-shrink: 0;
+}
+
+.search {
+  flex: 1;
+  max-width: 480px;
+  background: #161b27;
+  border: 1px solid #1e2535;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #e2e8f0;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.search:focus { border-color: #6366f1; }
+.search::placeholder { color: #475569; }
+
+.pageSizeWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pageSizeLabel {
+  font-size: 13px;
+  color: #475569;
+}
+
+.pageSizeSelect {
+  background: #161b27;
+  border: 1px solid #1e2535;
+  border-radius: 6px;
+  padding: 5px 10px;
+  color: #e2e8f0;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.pageSizeSelect:focus { border-color: #6366f1; }
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.statItem {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.statNum {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.statLbl {
+  font-size: 11px;
+  color: #475569;
+}
+
+.statDivider {
+  color: #1e2535;
+  font-size: 16px;
+}
+
+.filteredBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  letter-spacing: 0.4px;
+}
+
+.tableWrap {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #475569;
+  background: #0f1117;
+  border-bottom: 1px solid #1e2535;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.sortable { cursor: pointer; user-select: none; }
+.sortable:hover { color: #94a3b8; }
+.sortIcon { margin-left: 4px; color: #6366f1; }
+
+.right { text-align: right; }
+
+.table td {
+  padding: 9px 16px;
+  border-bottom: 1px solid #0f1117;
+  vertical-align: middle;
+}
+
+.row:hover td { background: #161b27; }
+
+.tensorName {
+  font-family: monospace;
+  font-size: 13px;
+  color: #a5b4fc;
+  max-width: 460px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shape {
+  font-family: monospace;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.dtype {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #1e2535;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+}
+
+.loading { text-align: center; padding: 40px; color: #475569; }
+.error { padding: 16px 24px; color: #f87171; }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px;
+  border-top: 1px solid #1e2535;
+  font-size: 13px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.pagination button {
+  background: #161b27;
+  border: 1px solid #1e2535;
+  color: #94a3b8;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.pagination button:hover:not(:disabled) { background: #1e2535; color: #e2e8f0; }
+.pagination button:disabled { opacity: 0.4; cursor: default; }
