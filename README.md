@@ -6,6 +6,8 @@ A local AI model explorer that runs entirely on your machine. Open any `.safeten
 
 ![Weight Atlas](https://img.shields.io/badge/format-SafeTensors%20%7C%20GGUF%20%7C%20MLX-6366f1) ![Python](https://img.shields.io/badge/python-3.11%2B-blue) ![License](https://img.shields.io/badge/license-MIT-green)
 
+![Weight Atlas home screen](docs/screenshots/main.png)
+
 ---
 
 ## What it does
@@ -16,6 +18,25 @@ A local AI model explorer that runs entirely on your machine. Open any `.safeten
 - **Metadata** — all embedded key-value metadata from the model file
 
 Supported formats: `SafeTensors`, `GGUF` (including quantized: Q4_0, Q4_1, Q5_0, Q5_1, Q8_0, BF16…), `MLX`
+
+---
+
+## Screenshots
+
+**Atlas — parameter distribution treemap**
+![Atlas view](docs/screenshots/atlas.png)
+
+**Tensors — full tensor list with search and filter**
+![Tensor explorer](docs/screenshots/tensors.png)
+
+**Weight viewer — heatmap (2D tensors)**
+![Weight heatmap](docs/screenshots/weight_chart.png)
+
+**Weight viewer — bar chart (1D tensors)**
+![Weight bar chart](docs/screenshots/weight_chart_2.png)
+
+**Weight viewer — table / Excel mode**
+![Weight table](docs/screenshots/weight_table.png)
 
 ---
 
