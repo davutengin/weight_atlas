@@ -81,29 +81,39 @@ function VocabModal({ modelId, vocabSize, onClose }: {
   vocabSize?: number | null
   onClose: () => void
 }) {
-  const [search, setSearch]   = useState('')
-  const [offset, setOffset]   = useState(0)
-  const [tokens, setTokens]   = useState<string[]>([])
-  const [total, setTotal]     = useState(vocabSize ?? 0)
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const [search, setSearch]         = useState('')
+  const [debouncedSearch, setDebounced] = useState('')
+  const [offset, setOffset]         = useState(0)
+  const [tokens, setTokens]         = useState<string[]>([])
+  const [ids, setIds]               = useState<number[] | null>(null)
+  const [total, setTotal]           = useState(vocabSize ?? 0)
+  const [loading, setLoading]       = useState(false)
+  const [error, setError]           = useState('')
 
-  const fetchPage = useCallback((off: number) => {
+  // Debounce search input 300ms
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search), 300)
+    return () => clearTimeout(t)
+  }, [search])
+
+  const fetchPage = useCallback((off: number, q: string) => {
     setLoading(true)
     setError('')
-    api.getVocab(modelId, off, PAGE_SIZE)
-      .then(r => { setTokens(r.tokens); setTotal(r.total); setOffset(off) })
+    api.getVocab(modelId, off, PAGE_SIZE, q || undefined)
+      .then(r => {
+        setTokens(r.tokens)
+        setIds(r.ids ?? null)
+        setTotal(r.total)
+        setOffset(off)
+      })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
   }, [modelId])
 
-  useEffect(() => { fetchPage(0) }, [fetchPage])
+  // Refetch when debounced search or offset changes
+  useEffect(() => { fetchPage(0, debouncedSearch) }, [debouncedSearch, fetchPage])
 
-  const filtered = search
-    ? tokens.filter(t => t.toLowerCase().includes(search.toLowerCase()))
-    : tokens
-
-  const totalPages = Math.ceil(total / PAGE_SIZE)
+  const totalPages  = Math.ceil(total / PAGE_SIZE)
   const currentPage = Math.floor(offset / PAGE_SIZE)
 
   return (
@@ -113,8 +123,8 @@ function VocabModal({ modelId, vocabSize, onClose }: {
           <div>
             <div className={styles.modalTitle}>Vocabulary</div>
             <div className={styles.modalSub}>
-              {total.toLocaleString()} tokens total
-              {search ? ` · ${filtered.length} match` : ` · showing ${offset + 1}–${Math.min(offset + PAGE_SIZE, total)}`}
+              {total.toLocaleString()} {debouncedSearch ? 'matches' : 'tokens total'}
+              {!debouncedSearch && ` · showing ${offset + 1}–${Math.min(offset + PAGE_SIZE, total)}`}
             </div>
           </div>
           <button className={styles.modalClose} onClick={onClose}>✕</button>
@@ -123,18 +133,18 @@ function VocabModal({ modelId, vocabSize, onClose }: {
         <div className={styles.modalSearch}>
           <input
             className={styles.searchInput}
-            placeholder="Search in current page…"
+            placeholder="Search all tokens…"
             value={search}
             onChange={e => setSearch(e.target.value)}
             autoFocus
           />
-          {!search && totalPages > 1 && (
+          {totalPages > 1 && (
             <div className={styles.pagNav}>
-              <button disabled={currentPage === 0 || loading} onClick={() => fetchPage(0)}>⏮</button>
-              <button disabled={currentPage === 0 || loading} onClick={() => fetchPage(offset - PAGE_SIZE)}>‹</button>
+              <button disabled={currentPage === 0 || loading} onClick={() => fetchPage(0, debouncedSearch)}>⏮</button>
+              <button disabled={currentPage === 0 || loading} onClick={() => fetchPage(offset - PAGE_SIZE, debouncedSearch)}>‹</button>
               <span className={styles.pagInfo}>{currentPage + 1} / {totalPages}</span>
-              <button disabled={currentPage >= totalPages - 1 || loading} onClick={() => fetchPage(offset + PAGE_SIZE)}>›</button>
-              <button disabled={currentPage >= totalPages - 1 || loading} onClick={() => fetchPage((totalPages - 1) * PAGE_SIZE)}>⏭</button>
+              <button disabled={currentPage >= totalPages - 1 || loading} onClick={() => fetchPage(offset + PAGE_SIZE, debouncedSearch)}>›</button>
+              <button disabled={currentPage >= totalPages - 1 || loading} onClick={() => fetchPage((totalPages - 1) * PAGE_SIZE, debouncedSearch)}>⏭</button>
             </div>
           )}
         </div>
@@ -144,12 +154,11 @@ function VocabModal({ modelId, vocabSize, onClose }: {
           {error   && <div style={{ gridColumn: '1/-1', padding: '32px', textAlign: 'center', color: '#f87171' }}>{error}</div>}
           {!loading && !error && tokens.length === 0 && (
             <div style={{ gridColumn: '1/-1', padding: '32px', textAlign: 'center', color: '#475569', fontSize: '13px' }}>
-              Token data not available for this model.
+              {debouncedSearch ? `No tokens match "${debouncedSearch}".` : 'Token data not available for this model.'}
             </div>
           )}
-          {!loading && filtered.map((token, i) => {
-            const id = offset + tokens.indexOf(token, search ? 0 : i)
-            const realId = search ? tokens.indexOf(token) + offset : offset + i
+          {!loading && tokens.map((token, i) => {
+            const realId = ids ? ids[i] : offset + i
             return (
               <div key={realId} className={styles.tokenCard} title={`ID: ${realId}`}>
                 <span className={styles.tokenText}>{token === '' ? <em className={styles.tokenEmpty}>empty</em> : token}</span>
@@ -157,9 +166,6 @@ function VocabModal({ modelId, vocabSize, onClose }: {
               </div>
             )
           })}
-          {!loading && search && filtered.length === 0 && (
-            <div style={{ gridColumn: '1/-1', padding: '16px', color: '#475569', fontSize: '13px' }}>No matches in this page.</div>
-          )}
         </div>
       </div>
     </div>
