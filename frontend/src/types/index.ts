@@ -67,6 +67,53 @@ export interface SearchResult {
   total: number
 }
 
+export interface LoRACandidate {
+  module: string
+  layer_count: number
+  param_count: number
+  priority: 'core' | 'optional'
+}
+
+export interface FineTuningPreset {
+  name: string
+  modules: string[]
+  trainable_params: number
+  adapter_size_mb: number
+  pct_of_model: number
+}
+
+export interface ArchitectureFingerprint {
+  family: string
+  confidence: number
+  reasons: string[]
+  hidden_size: number | null
+  layer_count: number | null
+  attention_heads: number | null
+}
+
+export interface QLoRAAnalysis {
+  compatible: boolean
+  quantization_status: string
+  recommended_strategy: string
+  reasons: string[]
+}
+
+export interface ReadinessScore {
+  score: number
+  reasons: string[]
+}
+
+export interface TrainabilityAnalysis {
+  fingerprint: ArchitectureFingerprint
+  lora_candidates: LoRACandidate[]
+  presets: FineTuningPreset[]
+  qlora: QLoRAAnalysis
+  readiness: ReadinessScore
+  summary: string
+  recommended_preset: string
+  recommended_modules: string[]
+}
+
 export interface LoadModelResponse {
   model_id: string
   overview: ModelOverview

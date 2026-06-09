@@ -75,6 +75,29 @@ class GGUFAdapter(ModelAdapter):
 
         return kv, tensors
 
+    def get_vocab(self) -> list[str]:
+        """Read the full tokenizer.ggml.tokens list with no preview limit."""
+        kv, _ = self._parse_unlimited_tokens()
+        tokens = kv.get("tokenizer.ggml.tokens", [])
+        return [str(t) for t in tokens] if isinstance(tokens, list) else []
+
+    def _parse_unlimited_tokens(self):
+        """Like _parse() but stores ALL token strings instead of first 64."""
+        import struct as _struct
+        with open(self.path, "rb") as f:
+            if f.read(4) != GGUF_MAGIC:
+                raise ValueError("Not a GGUF file")
+            version     = _read_u32(f)
+            tensor_count = _read_u64(f)
+            kv_count    = _read_u64(f)
+            kv = {}
+            for _ in range(kv_count):
+                key   = _read_string(f)
+                vtype = _read_u32(f)
+                value = _read_value_unlimited(f, vtype, version)
+                kv[key] = value
+        return kv, []
+
     def get_tensors(self) -> list[TensorInfo]:
         _, tensors = self._parse()
         return tensors
@@ -171,6 +194,27 @@ def _read_value(f, vtype: int, version: int = 3):
                     items.append(val)
             return items
 
+    if vtype == 10: return _read_u64(f)
+    if vtype == 11: return _read_i64(f)
+    if vtype == 12: return _read_f64(f)
+    raise ValueError(f"Unknown GGUF value type: {vtype}")
+
+
+def _read_value_unlimited(f, vtype: int, version: int = 3):
+    """Like _read_value but stores ALL array elements (no preview limit)."""
+    if vtype == 0: return _read_u8(f)
+    if vtype == 1: return _read_i8(f)
+    if vtype == 2: return _read_u16(f)
+    if vtype == 3: return _read_i16(f)
+    if vtype == 4: return _read_u32(f)
+    if vtype == 5: return _read_i32(f)
+    if vtype == 6: return _read_f32(f)
+    if vtype == 7: return bool(_read_u8(f))
+    if vtype == 8: return _read_string(f)
+    if vtype == 9:
+        elem_type = _read_u32(f)
+        count     = _read_u64(f)
+        return [_read_value_unlimited(f, elem_type, version) for _ in range(count)]
     if vtype == 10: return _read_u64(f)
     if vtype == 11: return _read_i64(f)
     if vtype == 12: return _read_f64(f)

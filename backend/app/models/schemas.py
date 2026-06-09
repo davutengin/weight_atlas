@@ -66,6 +66,53 @@ class SearchResult(BaseModel):
     total: int
 
 
+class LoRACandidate(BaseModel):
+    module: str
+    layer_count: int
+    param_count: int
+    priority: str  # "core" | "optional"
+
+
+class FineTuningPreset(BaseModel):
+    name: str
+    modules: list[str]
+    trainable_params: int
+    adapter_size_mb: float
+    pct_of_model: float
+
+
+class ArchitectureFingerprint(BaseModel):
+    family: str
+    confidence: int
+    reasons: list[str]
+    hidden_size: Optional[int] = None
+    layer_count: Optional[int] = None
+    attention_heads: Optional[int] = None
+
+
+class QLoRAAnalysis(BaseModel):
+    compatible: bool
+    quantization_status: str
+    recommended_strategy: str
+    reasons: list[str]
+
+
+class ReadinessScore(BaseModel):
+    score: int
+    reasons: list[str]
+
+
+class TrainabilityAnalysis(BaseModel):
+    fingerprint: ArchitectureFingerprint
+    lora_candidates: list[LoRACandidate]
+    presets: list[FineTuningPreset]
+    qlora: QLoRAAnalysis
+    readiness: ReadinessScore
+    summary: str
+    recommended_preset: str
+    recommended_modules: list[str]
+
+
 class LoadModelRequest(BaseModel):
     path: str
 

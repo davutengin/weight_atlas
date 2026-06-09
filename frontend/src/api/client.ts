@@ -1,6 +1,6 @@
 import type {
   LoadModelResponse, ModelOverview, TensorListResponse,
-  AtlasNode, SearchResult, TensorDataResponse,
+  AtlasNode, SearchResult, TensorDataResponse, TrainabilityAnalysis,
 } from '../types'
 
 const BASE = '/api'
@@ -43,6 +43,12 @@ export const api = {
 
   search: (modelId: string, q: string): Promise<SearchResult> =>
     request(`/models/${encodeURIComponent(modelId)}/search?q=${encodeURIComponent(q)}`),
+
+  getTrainability: (modelId: string): Promise<TrainabilityAnalysis> =>
+    request(`/models/${encodeURIComponent(modelId)}/trainability`),
+
+  getVocab: (modelId: string, offset: number, limit: number): Promise<{ tokens: string[]; total: number; offset: number; limit: number }> =>
+    request(`/models/${encodeURIComponent(modelId)}/vocab?offset=${offset}&limit=${limit}`),
 
   getTensorData: (
     modelId: string,

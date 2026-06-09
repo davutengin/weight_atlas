@@ -24,6 +24,10 @@ class ModelAdapter(ABC):
     def can_handle(cls, path: Path) -> bool:
         pass
 
+    def get_vocab(self) -> list[str]:
+        """Return the full vocabulary token list. Override in subclasses."""
+        return []
+
     def _dtype_size(self, dtype: str) -> int:
         sizes = {
             "F32": 4, "F16": 2, "BF16": 2, "F8_E4M3": 1, "F8_E5M2": 1,

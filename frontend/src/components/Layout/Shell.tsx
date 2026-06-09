@@ -2,10 +2,11 @@ import { useStore } from '../../store'
 import styles from './Shell.module.css'
 
 const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'atlas', label: 'Atlas' },
-  { id: 'tensors', label: 'Tensors' },
-  { id: 'metadata', label: 'Metadata' },
+  { id: 'overview',      label: 'Overview' },
+  { id: 'atlas',         label: 'Atlas' },
+  { id: 'tensors',       label: 'Tensors' },
+  { id: 'metadata',      label: 'Metadata' },
+  { id: 'trainability',  label: 'Trainability' },
 ] as const
 
 export function Shell({ children }: { children: React.ReactNode }) {

@@ -17,6 +17,28 @@ class SafeTensorsAdapter(ModelAdapter):
             header_json = f.read(header_size)
             return json.loads(header_json)
 
+    def get_vocab(self) -> list[str]:
+        tokenizer_path = self.path.parent / "tokenizer.json"
+        if not tokenizer_path.exists():
+            return []
+        try:
+            with open(tokenizer_path, encoding="utf-8") as f:
+                tok = json.load(f)
+            vocab_dict: dict = (
+                tok.get("model", {}).get("vocab")
+                or tok.get("vocab")
+                or {}
+            )
+            if not vocab_dict:
+                return []
+            tokens = [''] * len(vocab_dict)
+            for token, idx in vocab_dict.items():
+                if idx < len(tokens):
+                    tokens[idx] = token
+            return tokens
+        except Exception:
+            return []
+
     def get_tensors(self) -> list[TensorInfo]:
         header = self._read_header()
         tensors = []
@@ -53,6 +75,21 @@ class SafeTensorsAdapter(ModelAdapter):
         total_params = sum(t.param_count for t in tensors)
         arch = meta_map.get("architecture") or meta_map.get("model_type") or _infer_arch(tensors)
         vocab_size = _find_vocab_size(tensors, meta_map)
+
+        # Detect vocab size from tokenizer.json if not already found
+        if vocab_size is None:
+            tokenizer_path = self.path.parent / "tokenizer.json"
+            if tokenizer_path.exists():
+                try:
+                    with open(tokenizer_path, encoding="utf-8") as f:
+                        tok = json.load(f)
+                    vocab_dict = (
+                        tok.get("model", {}).get("vocab") or tok.get("vocab") or {}
+                    )
+                    if vocab_dict:
+                        vocab_size = len(vocab_dict)
+                except Exception:
+                    pass
 
         return ModelOverview(
             id=str(self.path),
