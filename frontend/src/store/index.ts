@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { ModelOverview } from '../types'
 
-type Tab = 'overview' | 'atlas' | 'tensors' | 'metadata' | 'trainability'
+type Tab = 'overview' | 'atlas' | 'tensors' | 'graph' | 'metadata' | 'trainability'
 
 interface AppState {
   modelId: string | null

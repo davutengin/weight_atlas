@@ -47,6 +47,9 @@ export const api = {
   getTrainability: (modelId: string): Promise<TrainabilityAnalysis> =>
     request(`/models/${encodeURIComponent(modelId)}/trainability`),
 
+  getGraph: (modelId: string): Promise<{ diagram: string; node_map: Record<string, import('../types').TensorInfo> }> =>
+    request(`/models/${encodeURIComponent(modelId)}/graph`),
+
   getVocab: (modelId: string, offset: number, limit: number, search?: string): Promise<{ tokens: string[]; ids?: number[]; total: number; offset: number; limit: number }> => {
     const q = new URLSearchParams({ offset: String(offset), limit: String(limit) })
     if (search) q.set('search', search)

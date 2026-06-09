@@ -5,6 +5,7 @@ const TABS = [
   { id: 'overview',      label: 'Overview' },
   { id: 'atlas',         label: 'Atlas' },
   { id: 'tensors',       label: 'Tensors' },
+  { id: 'graph',         label: 'Graph' },
   { id: 'metadata',      label: 'Metadata' },
   { id: 'trainability',  label: 'Trainability' },
 ] as const

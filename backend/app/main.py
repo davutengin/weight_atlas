@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 
 from app.core.config import settings
-from app.api import models, tensors, search, data, trainability, vocab
+from app.api import models, tensors, search, data, trainability, vocab, graph
 
 app = FastAPI(title=settings.app_name, version=settings.version)
 
@@ -22,6 +22,7 @@ app.include_router(search.router)
 app.include_router(data.router)
 app.include_router(trainability.router)
 app.include_router(vocab.router)
+app.include_router(graph.router)
 
 
 @app.get("/api/health")
